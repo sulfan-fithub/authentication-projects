@@ -1,16 +1,14 @@
 //jshint esversion:6
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const flash = require('express-flash');
 const session = require('express-session');
-const encrypt = require('mongoose-encryption');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 
 const app = express();
-
 
 app.use(express.static('public'));
 app.set("view engine", "ejs");
@@ -29,14 +27,12 @@ mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true, // Make sure email is required
-        unique: true, // Ensure email is unique
+        required: true,
+        unique: true,
     },
     password: String,
 });
 
-
-userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ['password'] });
 
 const User = mongoose.model("User", userSchema);
 
@@ -54,29 +50,34 @@ app.get("/register", (req, res) => {
     res.render("register", { errorMessage: errorMessage });
 });
 
+const saltRounds = 10;
+
 app.post("/register", async (req, res) => {
-    const newUser = new User({
-        username: req.body.email,
-        password: req.body.password,
-    });
-
     try {
-        // Check if the email already exists
-        const existingUser = await User.findOne({ username: newUser.email }).exec();
-        if (existingUser) {
-            // If email exists, send an error message
-            req.flash("error", "Email already exists. Please use a different email.");
-            return res.redirect("/register");
-        } else {
-            // Hash the password using bcrypt
-            const hashedPassword = await bcrypt.hash(newUser.password, 10);
-            newUser.password = hashedPassword;
+        // Hash password dengan menggunakan bcrypt
+        bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+            if (err) {
+                console.error(err);
+                req.flash("error", "Error registering.");
+                return res.redirect("/register");
+            }
 
-            // Save the user with the hashed password
-            await newUser.save();
+            const newUser = new User({
+                email: req.body.email,
+                password: hash,
+            });
 
-            return res.render("secrets");
-        }
+            // Cari pengguna dengan email yang sama
+            const existingUser = await User.findOne({ email: newUser.email }).exec();
+            if (existingUser) {
+                req.flash("error", "Email already exists. Please use a different email.");
+                return res.redirect("/register");
+            } else {
+                // Simpan pengguna dengan password yang di-hash
+                await newUser.save();
+                return res.render("secrets");
+            }
+        });
     } catch (err) {
         console.error(err);
         req.flash("error", "Error registering.");
@@ -84,33 +85,27 @@ app.post("/register", async (req, res) => {
     }
 });
 
+
 app.post("/login", async (req, res) => {
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
 
     try {
-        const foundUser = await User.findOne({ username: username }).exec();
-        console.log(`Username: ${username}`);
+        const foundUser = await User.findOne({ email: email }).exec();
         if (!foundUser) {
-            // User not found, handle this case
-            const errorMessage = "Username or password is incorrect.";
+            const errorMessage = "Email or password is incorrect.";
             return res.render("login", { errorMessage: errorMessage });
         }
 
-        // Use the decrypted password from the found user
-        const decryptedPassword = foundUser.password;
+        const hashedPassword = foundUser.password;
 
-        // Use bcrypt.compare to compare the provided password with the hashed password
-        const passwordsMatch = await bcrypt.compare(password, decryptedPassword);
-
-        console.log(`Password: ${password}`);
-        console.log(`Decrypted Password: ${decryptedPassword}`);
-
+        //bcrypt.compare untuk membandingkan password yang diterima dengan password di database
+        const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
         if (passwordsMatch) {
             return res.render("secrets");
         } else {
-            const errorMessage = "Username or password is incorrect.";
+            const errorMessage = "Email or password is incorrect.";
             return res.render("login", { errorMessage: errorMessage });
         }
     } catch (err) {
@@ -119,7 +114,6 @@ app.post("/login", async (req, res) => {
         return res.render("login", { errorMessage: errorMessage });
     }
 });
-
 
 const port = 3000;
 
