@@ -53,10 +53,4 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
 
 Aplikasi akan dijalankan pada port default 3000 (http://localhost:3000). Anda dapat mengaksesnya melalui browser Anda.
 
-## Penggunaan
-
-Deskripsikan cara penggunaan proyek Anda di sini. Berikan panduan singkat atau contoh-contoh penggunaan jika diperlukan.
-
----
-
 © 2023 [Sulfan Aidid]
