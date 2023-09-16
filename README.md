@@ -63,6 +63,3 @@ Proyek ini dilisensikan di bawah Lisensi ISC - Lihat berkas [LICENSE](LICENSE) u
 ---
 
 © 2023 [Sulfan Aidid]
-```
-
-Sama seperti sebelumnya, pastikan Anda menggantikan `[Nama Anda]` dengan nama Anda sebagai penulis proyek ini dan sesuaikan deskripsi serta dokumentasi lainnya sesuai kebutuhan Anda.
