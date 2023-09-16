@@ -8,11 +8,13 @@
 
           <h2 class="text-center mb-4">Login</h2>
 
-
-          <!-- Display error message if it exists
+          <!-- Display error message if it exists -->
+          <% if (errorMessage) { %>
             <div class="alert alert-danger">
+              <%= errorMessage %>
             </div>
-         -->
+          <% } %>          
+          
 
           <!-- Makes POST request to /login route -->
           <form action="/login" method="POST">

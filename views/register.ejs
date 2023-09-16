@@ -8,6 +8,14 @@
 
           <h2 class="text-center mb-4">Register</h2>
 
+          <% if (errorMessage != true) { %>
+            <div class="alert alert-danger">
+              <%= errorMessage %>
+            </div>
+          <% } %>
+          
+        
+
           <!-- Makes POST request to /register route -->
           <form action="/register" method="POST">
             <div class="form-group">
