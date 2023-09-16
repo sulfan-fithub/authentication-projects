@@ -8,23 +8,21 @@
 
           <h2 class="text-center mb-4">Register</h2>
 
-          <% if (errorMessage != true) { %>
+          <% if (errorMessage && errorMessage.length > 0) { %>
             <div class="alert alert-danger">
               <%= errorMessage %>
             </div>
           <% } %>
           
-        
-
           <!-- Makes POST request to /register route -->
           <form action="/register" method="POST">
             <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
+                <label for="email">Email</label>
+                <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
             </div>
             <button type="submit" class="btn btn-dark btn-block">Register</button>
           </form>

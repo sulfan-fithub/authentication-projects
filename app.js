@@ -6,7 +6,8 @@ const ejs = require('ejs');
 const mongoose = require('mongoose');
 const flash = require('express-flash');
 const session = require('express-session');
-const bcrypt = require('bcrypt')
+const passport = require('passport');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const app = express();
 
@@ -17,10 +18,13 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(flash());
 app.use(session({
-    secret: 'your-secret-key',
+    secret: 'secret cat',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
 
@@ -33,8 +37,15 @@ const userSchema = new mongoose.Schema({
     password: String,
 });
 
+userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
+
 
 const User = mongoose.model("User", userSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.get("/", (req, res) => {
     res.render("home");
@@ -50,73 +61,55 @@ app.get("/register", (req, res) => {
     res.render("register", { errorMessage: errorMessage });
 });
 
-const saltRounds = 10;
+app.get("/secrets", (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect('/login');
+    // Render the secrets page here
+    res.render("secrets")
+});
+
+app.get("/logout", (req, res) => {
+    req.logout(function(err) {
+        if (err) {
+            console.error(err);
+        }
+        res.redirect("/");
+    });
+});
+
+
 
 app.post("/register", async (req, res) => {
     try {
-        // Hash password dengan menggunakan bcrypt
-        bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
-            if (err) {
-                console.error(err);
-                req.flash("error", "Error registering.");
-                return res.redirect("/register");
-            }
-
-            const newUser = new User({
-                email: req.body.email,
-                password: hash,
-            });
-
-            // Cari pengguna dengan email yang sama
-            const existingUser = await User.findOne({ email: newUser.email }).exec();
-            if (existingUser) {
-                req.flash("error", "Email already exists. Please use a different email.");
-                return res.redirect("/register");
-            } else {
-                // Simpan pengguna dengan password yang di-hash
-                await newUser.save();
-                return res.render("secrets");
-            }
+        await User.register({ email: req.body.email }, req.body.password);
+        passport.authenticate("local")(req, res, () => {
+            res.redirect("/secrets");
         });
     } catch (err) {
-        console.error(err);
-        req.flash("error", "Error registering.");
-        return res.redirect("/register");
-    }
-});
+        console.error(err); // Log the error for debugging
 
-
-app.post("/login", async (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-
-    try {
-        const foundUser = await User.findOne({ email: email }).exec();
-        if (!foundUser) {
-            const errorMessage = "Email or password is incorrect.";
-            return res.render("login", { errorMessage: errorMessage });
-        }
-
-        const hashedPassword = foundUser.password;
-
-        //bcrypt.compare untuk membandingkan password yang diterima dengan password di database
-        const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-
-        if (passwordsMatch) {
-            return res.render("secrets");
+        if (err.name === "MongoError" && err.code === 11000) {
+            // Duplicate email error
+            req.flash("error", "Email address is already registered.");
+            res.redirect("/register");
         } else {
-            const errorMessage = "Email or password is incorrect.";
-            return res.render("login", { errorMessage: errorMessage });
+            // Other registration errors
+            console.error(err);
+            req.flash("error", "Error registering: " + err.message); // Display the specific error message
+            res.render("register", { errorMessage: req.flash("error") });
         }
-    } catch (err) {
-        console.error(err);
-        const errorMessage = "An error occurred during login.";
-        return res.render("login", { errorMessage: errorMessage });
     }
 });
+
+
+
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/secrets",
+    failureRedirect: "/login",
+    failureFlash: true
+}));
 
 const port = 3000;
 
 app.listen(port, () => {
-    console.log(`server running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });
