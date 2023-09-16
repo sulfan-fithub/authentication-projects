@@ -1,5 +1,7 @@
 # Authentication Projects
 
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+
 Deskripsi singkat tentang proyek Anda di sini.
 
 ## Daftar Isi
@@ -7,7 +9,6 @@ Deskripsi singkat tentang proyek Anda di sini.
 - [Deskripsi](#deskripsi)
 - [Instalasi](#instalasi)
 - [Penggunaan](#penggunaan)
-- [Lisensi](#lisensi)
 
 ## Deskripsi
 
@@ -55,10 +56,6 @@ Aplikasi akan dijalankan pada port default 3000 (http://localhost:3000). Anda da
 ## Penggunaan
 
 Deskripsikan cara penggunaan proyek Anda di sini. Berikan panduan singkat atau contoh-contoh penggunaan jika diperlukan.
-
-## Lisensi
-
-Proyek ini dilisensikan di bawah Lisensi ISC - Lihat berkas [LICENSE](LICENSE) untuk detailnya.
 
 ---
 
