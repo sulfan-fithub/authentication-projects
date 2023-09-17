@@ -8,15 +8,14 @@
 
           <h2 class="text-center mb-4">Login</h2>
 
-          <!-- Display error message if it exists -->
           <% if (errorMessage) { %>
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" style="background-color: white; border: none;">
               <%= errorMessage %>
             </div>
-          <% } %>          
+          <% } %>
           
+                  
 
-          <!-- Makes POST request to /login route -->
           <form action="/login" method="POST">
             <div class="form-group">
               <label for="email">Email</label>
@@ -28,6 +27,19 @@
             </div>
             <button type="submit" class="btn btn-dark btn-block">Login</button>
           </form>
+
+          <div class="row justify-content-center mt-4">
+            <div class="col-sm-6">
+              <div class="card-social-block">
+                <div class="card-body">
+                  <!-- Adjusted Google login button -->
+                  <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
+                    <span class="fab fa-google"></span> Login with Google
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>

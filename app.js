@@ -1,4 +1,6 @@
 //jshint esversion:6
+
+// Import necessary modules
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,14 +10,16 @@ const flash = require('express-flash');
 const session = require('express-session');
 const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require('mongoose-findorcreate');
 
+// Create an Express app
 const app = express();
 
+// Configure app settings
 app.use(express.static('public'));
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({
-    extended: true,
-}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(flash());
 app.use(session({
     secret: 'secret cat',
@@ -26,29 +30,66 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
 
+// Define user schema and model
 const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
+    email: String,
     password: String,
+    googleId: String,
+    secret: String,
 });
 
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
-
+userSchema.plugin(findOrCreate);
 
 const User = mongoose.model("User", userSchema);
 
 passport.use(User.createStrategy());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
 
+passport.deserializeUser((id, done) => {
+    User.findById(id)
+      .then(user => {
+        done(null, user);
+      })
+      .catch(err => {
+        done(err, null);
+      });
+});
+
+// Configure Google OAuth 2.0 strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/secrets",
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+// Define routes and their handlers
 app.get("/", (req, res) => {
     res.render("home");
+});
+
+app.get("/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+app.get("/auth/google/secrets", 
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function(req, res) {
+    // Successful authentication, redirect to secrets page.
+    res.redirect("/secrets");
 });
 
 app.get("/login", (req, res) => {
@@ -61,10 +102,42 @@ app.get("/register", (req, res) => {
     res.render("register", { errorMessage: errorMessage });
 });
 
-app.get("/secrets", (req, res) => {
+app.get("/secrets", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) return res.redirect('/login');
+      
+      const foundUsers = await User.find({ "secret": { $ne: null } }).exec();
+      
+      res.render("secrets", { userWithSecrets: foundUsers });
+    } catch (err) {
+      console.error(err);
+      // Handle the error here, e.g., send an error response or redirect to an error page.
+      res.status(500).send("An error occurred.");
+    }
+  });
+  
+
+app.get("/submit", (req, res) => {
     if (!req.isAuthenticated()) return res.redirect('/login');
-    // Render the secrets page here
-    res.render("secrets")
+    res.render("submit")
+});
+
+app.post("/submit", async (req, res) => {
+    try {
+      const submittedSecret = req.body.secret;
+      const foundUser = await User.findById(req.user.id);
+  
+      if (foundUser) {
+        foundUser.secret = submittedSecret;
+        await foundUser.save();
+      }
+  
+      res.redirect("/secrets");
+    } catch (err) {
+      console.error(err);
+      // Handle the error here, e.g., send an error response or redirect to an error page.
+      res.status(500).send("An error occurred.");
+    }
 });
 
 app.get("/logout", (req, res) => {
@@ -75,8 +148,6 @@ app.get("/logout", (req, res) => {
         res.redirect("/");
     });
 });
-
-
 
 app.post("/register", async (req, res) => {
     try {
@@ -100,14 +171,7 @@ app.post("/register", async (req, res) => {
     }
 });
 
-
-
-app.post("/login", passport.authenticate("local", {
-    successRedirect: "/secrets",
-    failureRedirect: "/login",
-    failureFlash: true
-}));
-
+// Start the server
 const port = 3000;
 
 app.listen(port, () => {

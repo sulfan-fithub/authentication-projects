@@ -14,3 +14,14 @@ body {
   color: #fff;
   background-color: #000;
 }
+
+
+.btn-google-custom {
+  background-color: #dd4b39; /* Use your desired color here */
+  color: #fff; /* Text color */
+  border: none; /* Remove border */
+}
+
+.btn-google-custom:hover {
+  background-color: #c53727; /* Change color on hover */
+}
