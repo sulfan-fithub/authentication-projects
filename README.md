@@ -12,7 +12,6 @@
 - [Features](#features)
 - [Technologies](#technologies)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ---
