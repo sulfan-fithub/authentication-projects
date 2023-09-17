@@ -1,56 +1,91 @@
 # Authentication Projects
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![[Project Image](https://drive.google.com/file/d/1FJOUulgOLYgS2YrLeWHT3XN6XNm_tUDt/view?usp=sharing)]([project-image-url](https://drive.google.com/file/d/1kUzjfNWKcwlcaIZBOhL96Q2O0n712XEf/view?usp=sharing), (https://drive.google.com/file/d/1B2lDI700g-k74lz8ZmK5gAv0Ji599bJd/view?usp=sharing)
 
-Deskripsi singkat tentang proyek Anda di sini.
+> Brief description of your project.
 
-## Daftar Isi
+---
 
-- [Deskripsi](#deskripsi)
-- [Instalasi](#instalasi)
-- [Penggunaan](#penggunaan)
+## Table of Contents
 
-## Deskripsi
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Technologies](#technologies)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-Proyek ini berisi berbagai proyek terkait otentikasi yang dibangun menggunakan berbagai teknologi, termasuk:
+---
+
+## Description
+
+Provide a brief and clear description of your project. Explain what it does, why it exists, and who the target audience is. Mention the main problem it solves or the key features it offers.
+
+---
+
+## Installation
+
+List the steps required to install your project. Be sure to include any prerequisites and dependencies from your `package.json` file.
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/authentication-projects.git
+
+# Navigate to the project directory
+cd authentication-projects
+
+# Install dependencies
+npm install
+```
+
+---
+
+## Usage
+```bash
+# Start the application
+npm start or node app.js
+```
+
+---
+
+## Features
+
+List the main features of your project. Highlight what makes it unique and valuable.
+
+- User registration and authentication
+- Integration with Google OAuth for easy login
+- User secrets submission and display
+- ...
+
+---
+
+## Technologies
+
+Specify the technologies, frameworks, and libraries used in your project. Provide versions if necessary.
 
 - Node.js
 - Express.js
-- MongoDB dengan Mongoose
-- EJS (Embedded JavaScript) untuk tampilan web
+- MongoDB
+- Passport.js
+- EJS
+- ...
 
-Proyek ini mencakup contoh-contoh otentikasi, seperti otentikasi pengguna dengan email dan kata sandi, serta otentikasi pihak ketiga menggunakan layanan seperti Google atau Facebook.
+---
 
-## Instalasi
+## Open Source
 
-Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah berikut:
+This project is open source, and you are welcome to use, modify, and distribute it as per your requirements. Feel free to contribute to the project or use it for your own purposes.
 
-1. Clone repositori ini ke komputer Anda:
+---
 
-   ```bash
-   git clone https://github.com/username/authentication-projects.git
-   ```
+## Contact
 
-2. Masuk ke direktori proyek:
+Provide your contact information in case users have questions or want to reach out to you.
 
-   ```bash
-   cd authentication-projects
-   ```
+- Email: sulfantech@gmail.com
+- GitHub: [sulfan-fithub](https://github.com/sulfanaidid)
+```
 
-3. Instal semua dependensi menggunakan npm:
-
-   ```bash
-   npm install
-   ```
-
-4. Pastikan Anda memiliki MongoDB yang berjalan di komputer Anda atau sesuaikan konfigurasi basis data dalam file `app.js`.
-
-5. Jalankan aplikasi:
-
-   ```bash
-   npm start
-   ```
-
-Aplikasi akan dijalankan pada port default 3000 (http://localhost:3000). Anda dapat mengaksesnya melalui browser Anda.
-
-© 2023 [Sulfan Aidid]
+By stating that the project is open source, you are essentially allowing others to use and contribute to it without specifying any particular license terms. This gives users the freedom to use and modify the code while understanding that it comes with no specific license restrictions.
