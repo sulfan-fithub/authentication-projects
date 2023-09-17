@@ -28,7 +28,7 @@ List the steps required to install your project. Be sure to include any prerequi
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/authentication-projects.git
+git clone https://github.com/sulfan-fithub/authentication-projects.git
 
 # Navigate to the project directory
 cd authentication-projects
