@@ -2,8 +2,6 @@
 
 ![[Project Image](https://drive.google.com/file/d/1FJOUulgOLYgS2YrLeWHT3XN6XNm_tUDt/view?usp=sharing)]([project-image-url](https://drive.google.com/file/d/1kUzjfNWKcwlcaIZBOhL96Q2O0n712XEf/view?usp=sharing), (https://drive.google.com/file/d/1B2lDI700g-k74lz8ZmK5gAv0Ji599bJd/view?usp=sharing)
 
-> Brief description of your project.
-
 ---
 
 ## Table of Contents
